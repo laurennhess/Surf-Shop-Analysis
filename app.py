@@ -17,7 +17,7 @@ Base.prepare(engine, reflect = True)
 Measurement = Base.classes.measurement
 Station = Base.classes.station
 
-session = Session(create_engine)
+session = Session(engine)
 
 #----------------------
 # Set up Flask
@@ -28,7 +28,6 @@ app = Flask(__name__)
 
 # Welcome Route
 @app.route('/')
-
 def welcome():
    return(
    '''
@@ -42,7 +41,6 @@ def welcome():
 
 # Precipitation Route
 @app.route("/api/v1.0/precipitation")
-
 def precipitation():
    prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
    precipitation = session.query(Measurement.date, Measurement.prcp).\
@@ -52,7 +50,6 @@ def precipitation():
 
 # Stations Route
 @app.route("/api/v1.0/stations")
-
 def stations():
     results = session.query(Station.station).all()
     stations = list(np.ravel(results))
@@ -60,7 +57,6 @@ def stations():
 
 # Tobs Route
 @app.route("/api/v1.0/tobs")
-
 def temp_monthly():
     prev_year = dt.date(2017, 8, 23) - dt.timedelta(days=365)
     results = session.query(Measurement.tobs).\
@@ -70,7 +66,6 @@ def temp_monthly():
     return jsonify(temps=temps)   
 
 @app.route("/api/v1.0/temp/<start>")
-
 @app.route("/api/v1.0/temp/<start>/<end>")
 def stats(start=None, end=None):
     sel = [func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
